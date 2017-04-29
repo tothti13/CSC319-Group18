@@ -1,61 +1,47 @@
-package moviereview;
+package moviereviewmain;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.io.File;
+import java.util.Scanner;
+
 
 public class MovieReviewMain {
-  
-  public static void main(String args[]) throws IOException {
-    
-    HashTable table = new HashTable(2000);
-    
-    File file = new File("movieReviews.txt");
-    BufferedReader reader = null;
-    
-    int x = 1;
-    try{
-      reader = new BufferedReader(new FileReader(file));
-      if(reader.readLine() == null)
-      {
-        System.out.println("Cound not open file");
-      }
-      else{
-        table = new HashTable(2000);
-        while((line = reader.readLine()) != null)
-        {
-          score = Integer.parseInt(message.substring(0 , 1));
-          
-          message = line.substring(x , message.indexOf(" "));
-          x += message.indexOf(" ");
+
+    public static void main(String args[]) throws IOException {
+
+        File reviewFile = new File("movieReviews.txt");
+
+        Scanner keyboard = new Scanner(System.in);
+
+        int reviewScore;
+        String reviewText;
+        String review;
+        double k = 0;
+        HashTable table = new HashTable(1000);
+
+        System.out.println("Enter a review:");
+        review = keyboard.nextLine();
+        String[] arr = review.split(" ");
+
+        for (String word : arr) {
+            Scanner reviewScanner = new Scanner(reviewFile);
+            word = (" " + word + " ").toLowerCase();
+
+            while (reviewScanner.hasNext()) {
+                reviewScore = reviewScanner.nextInt();
+                reviewText = reviewScanner.nextLine().toLowerCase();
+
+                if (reviewText.contains(word)) {
+                    table.put(reviewText, reviewScore);
+                    k = table.getAverage(reviewText);
+                }
+            }
         }
-      }
-    } catch (FileNotFoundException e){
-    } catch(IOException e){
+        System.out.println("The review has an average value of " + k );
+        if (k > 2) {
+            System.out.println("Positive Sentiment");
+        } else {
+            System.out.println("Negative Sentiment");
+        }
     }
-    
-    
-    List<String> lines = readLines("movieReview.txt");
-    for (String a : lines) {
-      StringTokenizer token = new StringTokenizer(a, " ");
-      String message;
-      int score = Integer.parseInt(token.nextToken());
-      while (token.hasMoreTokens()) {
-        message = token.nextToken();
-        table.put(message, score);
-      }
-    }
-  }
-  
-  private static List<String> readLines(String file) throws IOException {
-    
-    return Files.readAllLines(Paths.get(file));
-    
-  }
 }
